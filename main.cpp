@@ -9,7 +9,7 @@ using int32 = int;
 
 void PrintIntro();
 void PlayGame();
-FText GetGuess();
+FText GetValidGuess();
 bool AskToPlayAgain();
 
 
@@ -50,35 +50,49 @@ void PlayGame()
 	// loop for the number of turns asking for guesses
     for (int32 count = 1; count <= MaxTries; count++) // TODO change from FOR to WHILE
 	{
-		FText Guess = GetGuess(); // TODO make loop checking valid
-
-        EGuessStatus Status = BCGame.CheckValid(Guess);
+		FText Guess = GetValidGuess(); // TODO make loop checking valid
 
 		// submit valid guess to the game, and receive counts
         FBCCount BCCount = BCGame.SubmitGuess(Guess);
 
-		// print number of bulls and cows
-        std::cout << std::endl << "BULLS = " << BCCount.Bulls << std::endl;
-        std::cout << "COWS  = " << BCCount.Cows << std::endl;
-
-		std::cout << std::endl;
+		std::cout << "\n" << "BULLS = " << BCCount.Bulls << "\n";
+		std::cout << "COWS  = " << BCCount.Cows << "\n\n";
 	}
-
 	// TODO summarise game
 }
 
 
-FText GetGuess() // TODO change to GetValidGuess
+// loop until user gives valid guess
+FText GetValidGuess()
 {
-	int32 CurrentTry = BCGame.GetCurrentTry();
-	int32 TotalTry = BCGame.GetMaxTries();
+	EGuessStatus Status = EGuessStatus::InvalidStatus;
+	do
+	{
+		// get a guess from the player
+		int32 CurrentTry = BCGame.GetCurrentTry();
+		int32 TotalTry = BCGame.GetMaxTries();
+		std::cout << "TRY " << CurrentTry << "/" << TotalTry << std::endl << std::endl;
+		std::cout << "ENTER YOUR GUESS: ";
+		FText Guess = "";
+		std::getline(std::cin, Guess);
 
-	// get a guess from the player
-	std::cout << "TRY " << CurrentTry << "/" << TotalTry << std::endl << std::endl;
-	std::cout << "ENTER YOUR GUESS: ";
-	FText Guess = "";
-	std::getline(std::cin, Guess);
-	return Guess;
+		Status = BCGame.CheckValid(Guess);
+		switch (Status)
+		{
+		case EGuessStatus::WrongLength:
+			std::cout << "\nERROR: PLEASE ENTER A " << BCGame.GetHiddenWordLength() << " LETTER WORD\n";
+			break;
+		case EGuessStatus::NotIsogram:
+			std::cout << "\nERROR: PLEASE ENTER A WORD WITHOUT REPEATING LETTERS\n";
+			break;
+		case EGuessStatus::NotLowercase:
+			std::cout << "\nERROR: PLEASE ENTER ALL LOWERCASE LETTERS\n";
+			break;
+		default:
+			return Guess;
+		}
+		std::cout << std::endl;
+	} while (Status != EGuessStatus::OK); // loop until no errors returned
 }
 
 
