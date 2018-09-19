@@ -16,6 +16,7 @@ struct FBCCount
 
 enum EGuessStatus
 {
+	InvalidStatus,
 	OK,
 	NotIsogram,
 	WrongLength,
