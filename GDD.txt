@@ -2,15 +2,14 @@ Game Name:
 Bulls & Cows
 
 Description: 
-Computer picks a random word. User has to guess the word. They have only a set amount of guesses. 
-When user makes a guess, either a bull (correct) or a cow (not correct) is returned. The number
-of correct letters in the word they guessed is also returned.
+Computer picks a random word. User has to guess the word. User only has a set amount of guesses. 
+When user makes a guess, number of bulls (correct letter/s in the correct place) and cows (correct letter/s in the wrong place) are returned.
 
 Inputs:
-- User inputs guesses.
+- User input guesses.
 - User is asked if they want to play again when game is over.
 
 Outputs:
-- ASCII drawing of a bull and/or a cow.
+- ASCII art.
 - Number of correct letters in the users guess.
 - Basic cout.
