@@ -8,6 +8,7 @@ FBullCowGame::FBullCowGame() { Reset(); }
 int32 FBullCowGame::GetMaxTries() const { return MyMaxTries; }
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
+bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
 
 
 void FBullCowGame::Reset()
@@ -18,13 +19,8 @@ void FBullCowGame::Reset()
 	MyMaxTries = MaxTries;
 	MyHiddenWord = HiddenWord;
 	MyCurrentTry = 1;
+	bGameIsWon = false;
 	return;
-}
-
-
-bool FBullCowGame::IsGameWon() const
-{
-	return false;
 }
 
 
@@ -33,12 +29,12 @@ EGuessStatus FBullCowGame::CheckValid(FString Guess) const
 	// if the guess isn't an isogram
 	if (false)
 	{
-		return EGuessStatus::NotIsogram;
+		return EGuessStatus::NotIsogram; // TODO write function
 	}
 	// if the guess isn't all lowercase
 	else if (false)
 	{
-		return EGuessStatus::NotLowercase;
+		return EGuessStatus::NotLowercase; // TODO write function
 	}
 	// if guess length is wrong
 	else if (Guess.length() != GetHiddenWordLength())
@@ -55,20 +51,17 @@ EGuessStatus FBullCowGame::CheckValid(FString Guess) const
 
 
 // receives a VALID guess, incriments turn, and returns count
-FBCCount FBullCowGame::SubmitGuess(FString Guess)
+FBCCount FBullCowGame::SubmitValidGuess(FString Guess)
 {
-	// incriment the turn number
 	MyCurrentTry++;
-
-	// setup a return variable
 	FBCCount BCCount;
+	int32 WordLength = MyHiddenWord.length(); // assuming same word as guess
 
-	// loop through all letters in the guess
-	int32 HiddenWordLength = MyHiddenWord.length();
-	for (int32 MHWChar = 0; MHWChar < HiddenWordLength; MHWChar++)
+	// loop through all letters in the hidden word
+	for (int32 MHWChar = 0; MHWChar < WordLength; MHWChar++)
 	{
-		// compare letters against the hidden word
-		for (int32 GChar = 0; GChar < HiddenWordLength; GChar++)
+		// compare letters against the guess
+		for (int32 GChar = 0; GChar < WordLength; GChar++)
 		{
 			// if they match then
 			if (Guess[GChar] == MyHiddenWord[MHWChar])
@@ -84,6 +77,13 @@ FBCCount FBullCowGame::SubmitGuess(FString Guess)
 			}
 		}
 	}
-
+	if (BCCount.Bulls == WordLength)
+	{
+		bGameIsWon = true;
+	}
+	else
+	{
+		bGameIsWon = false;
+	}
 	return BCCount;
 }
